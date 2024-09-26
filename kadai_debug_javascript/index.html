@@ -31,6 +31,8 @@
                     秒：<input type="number" id="seconds" class="form-control" oninput="updateTimer()" min="0">
                 </div>
             </div>
+        </div>
+        <div id="errors" class="mt-3 hidden">
             <!-- エラーメッセージ -->
             <span id="error" class="hidden text-danger"></span>
         </div>
@@ -56,25 +58,42 @@
         let countdownInterval;
         let alertInterval;
         let isPaused;
-
         // 入力フォームの値をタイマーに表示する関数
         function updateTimer() {
             let minutes = document.getElementById('minutes').value || 0;
             let seconds = document.getElementById('seconds').value || 0;
-
             // 入力フォームの値をチェック
-            if (minutes < 0 || seconds < 0) {
+            if (Number(minutes) < 0 || Number(seconds) < 0) {
+                minutes = "0";
+                seconds = "0";
+                document.getElementById('minutes').setAttribute('min','0');
+                document.getElementById('seconds').setAttribute('min','0');
+                document.getElementById('timer').innerText="00:00";
                 document.getElementById('errors').innerText = "マイナスは入力できません";
                 document.getElementById('errors').classList.remove('hidden');
+                startAlert();
+                resetCountdown();
                 return;
-            }
-
+            }else if(Number(minutes) > 999 || Number(seconds) > 60 ){
+                minutes = "0";
+                seconds = "0";
+                document.getElementById('minutes').setAttribute('min','0');
+                document.getElementById('seconds').setAttribute('min','0');
+                document.getElementById('timer').innerText="00:00";
+                document.getElementById('errors').innerText = "大きい値が入力されました。";
+                document.getElementById('errors').classList.remove('hidden');
+                startAlert();
+                resetCountdown();
+                return;
+            }                
             document.getElementById('error').classList.add('hidden');
             document.getElementById('timer').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
         // カウントダウンを開始する関数
         function startCountdown() {
+            document.getElementById('errors').classList.add('hidden');
+            isPaused = false;
             let minutes = document.getElementById('minutes').value || 0;
             let seconds = document.getElementById('seconds').value || 0;
             let timeLeft = (minutes * 60) + parseInt(seconds);
@@ -104,13 +123,17 @@
         function resumeCountdown() {
             isPaused = false;
             setMode("progress");
+            startCountdown();
         }
 
         // カウントダウンをリセットする関数
         function resetCountdown() {
             clearInterval(countdownInterval);
+            document.getElementById('minutes').value="";
+            document.getElementById('seconds').value="";
             updateTimer();
             setMode("restart");
+            setMode("setting");
         }
 
         // 時間設定モードに変更する関数
@@ -121,7 +144,10 @@
 
         // アラートを開始する関数
         function startAlert() {
-            let alertInterval = setInterval(() => {
+            document.getElementById('minutes').setAttribute('min','0');
+            document.getElementById('seconds').setAttribute('min','0');
+            //let alertInterval = setInterval(() => {
+            alertInterval = setInterval(() => {
                 document.body.style.backgroundColor = document.body.style.backgroundColor === 'red' ? 'white' : 'red';
             }, 1000);
             document.getElementById('alertStop').classList.remove('hidden')
