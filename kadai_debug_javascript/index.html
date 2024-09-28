@@ -56,7 +56,7 @@
 
     <script>
         let countdownInterval;
-        let alertInterval;
+        let alertInterval=[];
         let isPaused;
         // 入力フォームの値をタイマーに表示する関数
         function updateTimer() {
@@ -147,15 +147,20 @@
             document.getElementById('minutes').setAttribute('min','0');
             document.getElementById('seconds').setAttribute('min','0');
             //let alertInterval = setInterval(() => {
-            alertInterval = setInterval(() => {
+            let x = setInterval(() => {
                 document.body.style.backgroundColor = document.body.style.backgroundColor === 'red' ? 'white' : 'red';
             }, 1000);
+            alertInterval.push(x);
+            //console.log('x=' + x + '  LENGTH=' + alertInterval.length);
             document.getElementById('alertStop').classList.remove('hidden')
         }
 
         // アラートを停止する関数
         function stopAlert() {
-            clearInterval(alertInterval);
+            alertInterval.forEach(array=>{
+                clearInterval(array);
+                //console.log('array=' + array +'  LENGTH=' + alertInterval.length);
+            });
             document.body.style.backgroundColor = 'white';
             document.getElementById('alertStop').classList.add('hidden')
         }
