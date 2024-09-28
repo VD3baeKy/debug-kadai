@@ -55,9 +55,10 @@
     </div>
 
     <script>
-        let countdownInterval;
+        let countdownInterval=[];
         let alertInterval=[];
         let isPaused;
+        let timeLeft = 0;
         // 入力フォームの値をタイマーに表示する関数
         function updateTimer() {
             let minutes = document.getElementById('minutes').value || 0;
@@ -71,7 +72,7 @@
                 document.getElementById('timer').innerText="00:00";
                 document.getElementById('errors').innerText = "マイナスは入力できません";
                 document.getElementById('errors').classList.remove('hidden');
-                startAlert();
+                //startAlert();
                 resetCountdown();
                 return;
             }else if(Number(minutes) > 999 || Number(seconds) > 60 ){
@@ -82,11 +83,11 @@
                 document.getElementById('timer').innerText="00:00";
                 document.getElementById('errors').innerText = "大きい値が入力されました。";
                 document.getElementById('errors').classList.remove('hidden');
-                startAlert();
+                //startAlert();
                 resetCountdown();
                 return;
             }                
-            document.getElementById('error').classList.add('hidden');
+            document.getElementById('errors').classList.add('hidden');
             document.getElementById('timer').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
@@ -96,22 +97,48 @@
             isPaused = false;
             let minutes = document.getElementById('minutes').value || 0;
             let seconds = document.getElementById('seconds').value || 0;
-            let timeLeft = (minutes * 60) + parseInt(seconds);
+            //let timeLeft = (minutes * 60) + parseInt(seconds);
+            console.log('timeLeft=' + timeLeft);
+            if(timeLeft==0){
+                timeLeft = (minutes * 60) + parseInt(seconds);
+                console.log('timeLeft  =' + timeLeft);
+            }
             setMode("progress");
-            countdownInterval = setInterval(() => {
-                if(!isPaused) {
-                    timeLeft--;
-                    if(timeLeft < 0) {
-                        clearInterval(countdownInterval);
-                        startAlert();
-                    } else {
-                        let m = Math.floor(timeLeft / 60);
-                        let s = timeLeft % 60;
-                        document.getElementById('timer').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            if(countdownInterval.length==0){
+                //countdownInterval = setInterval(() => {
+                let y = setInterval(() => {
+                    if(!isPaused) {
+                        timeLeft--;
+                        if(timeLeft < 0) {
+                            //clearInterval(countdownInterval);
+                            clearInterval(countdownInterval.shift());
+                            startAlert();
+                        } else {
+                            let m = Math.floor(timeLeft / 60);
+                            let s = timeLeft % 60;
+                            document.getElementById('timer').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                        }
                     }
-                }
-            }, 1000);
-        }
+                }, 1000);
+                countdownInterval.push(y);
+                console.log('if');
+            }else{
+                console.log('else');
+                if(!isPaused) {
+                        timeLeft--;
+                        if(timeLeft < 0) {
+                            //clearInterval(countdownInterval);
+                            clearInterval(countdownInterval.shift());
+                            startAlert();
+                        } else {
+                            let m = Math.floor(timeLeft / 60);
+                            let s = timeLeft % 60;
+                            document.getElementById('timer').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                        }
+                    }
+
+            };
+        };
 
         // カウントダウンを一時停止する関数
         function pauseCountdown() {
@@ -128,9 +155,12 @@
 
         // カウントダウンをリセットする関数
         function resetCountdown() {
-            clearInterval(countdownInterval);
+            clearInterval(countdownInterval.shift());
             document.getElementById('minutes').value="";
             document.getElementById('seconds').value="";
+            timeLeft=0;
+            document.getElementById('timer').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
             updateTimer();
             setMode("restart");
             setMode("setting");
