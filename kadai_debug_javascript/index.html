@@ -65,27 +65,29 @@
             let seconds = document.getElementById('seconds').value || 0;
             // 入力フォームの値をチェック
             if (Number(minutes) < 0 || Number(seconds) < 0) {
-                minutes = "0";
-                seconds = "0";
-                document.getElementById('minutes').setAttribute('min','0');
-                document.getElementById('seconds').setAttribute('min','0');
-                document.getElementById('timer').innerText="00:00";
-                //document.getElementById('errors').innerText = "マイナスは入力できません";
+                //minutes = "0";
+                //seconds = "0";
+                //document.getElementById('minutes').setAttribute('min',minutes);
+                //document.getElementById('seconds').setAttribute('min',seconds);
+                //document.getElementById('minutes').value=minutes;
+                //document.getElementById('seconds').value=seconds;
+                //document.getElementById('timer').innerText="00:00";
+                document.getElementById('errors').innerText = "マイナスは入力できません";
                 document.getElementById('errors').classList.remove('hidden');
                 //startAlert();
-                resetCountdown();
+                //resetCountdown();
                 return;
-            }else if(Number(minutes) > 999 || Number(seconds) > 60 ){
-                minutes = "0";
-                seconds = "0";
-                document.getElementById('minutes').setAttribute('min','0');
-                document.getElementById('seconds').setAttribute('min','0');
-                document.getElementById('timer').innerText="00:00";
+            //}else if(Number(minutes) > 999 || Number(seconds) > 60 ){
+                //minutes = "0";
+                //seconds = "0";
+                //document.getElementById('minutes').setAttribute('min','0');
+                //document.getElementById('seconds').setAttribute('min','0');
+                //document.getElementById('timer').innerText="00:00";
                 //document.getElementById('errors').innerText = "大きい値が入力されました。";
-                document.getElementById('errors').classList.remove('hidden');
+                //document.getElementById('errors').classList.remove('hidden');
                 //startAlert();
-                resetCountdown();
-                return;
+                //resetCountdown();
+                //return;
             }                
             document.getElementById('errors').classList.add('hidden');
             document.getElementById('timer').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
